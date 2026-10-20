@@ -84,50 +84,72 @@ class Bird:
         screen.blit(self.img, self.rct)
 
 
-# ビームクラス:
-    # """
-    # こうかとんが放つビームに関するクラス
-    # """
-    # def イニシャライザ(self, bird:"Bird"):
-    #     """
-    #     ビーム画像Surfaceを生成する
-    #     引数 bird：ビームを放つこうかとん（Birdインスタンス）
-    #     """
-    #     self.img = pg.画像のロード(f"fig/beam.png")
-    #     self.rct = self.img.Rectの取得()
-    #     self.ビームの中心縦座標 = こうかとんの中心縦座標
-    #     self.ビームの左座標 = こうかとんの右座標
-    #     self.vx, self.vy = +5, 0
+class Beam:
+    """
+    こうかとんが放つビームに関するクラス
+    """
+    def __init__(self, bird:"Bird"):
+        """
+        ビーム画像Surfaceを生成する
+        引数 bird：ビームを放つこうかとん（Birdインスタンス）
+        """
+        self.img = pg.img.load(f"fig/beam.png")
+        self.rct = self.img.rect()
+        self.rct.centery  = bird.rct.centery #ビームの中心縦座標 = こうかとんの中心縦座標
+        self.rct.left =  bird.rct.right     #ビームの左座標 = こうかとんの右座標
+        self.vx, self.vy = +5, 0
 
-    # def update(self, screen: pg.Surface):
-    #     """
-    #     ビームを速度ベクトルself.vx, self.vyに基づき移動させる
-    #     引数 screen：画面Surface
-    #     """
-    #     if check_bound(self.rct) == (True, True):
-    #         self.rct.move_ip(self.vx, self.vy)
-    #         screen.blit(self.img, self.rct)    
+    def update(self, screen: pg.Surface):
+        """
+        ビームを速度ベクトルself.vx, self.vyに基づき移動させる
+        引数 screen：画面Surface
+        """
+        if check_bound(self.rct) == (True, True):
+            self.rct.move_ip(self.vx, self.vy)
+            screen.blit(self.img, self.rct)    
 
 '''1.スコア表示：scoreブランチ
-class Soree
+class Score
 
 • Scoreクラス
 • イニシャライザ
+def __init__(self , socre: "Score");
+
 • フォントの設定：self.fonto = pg.font.Font(None, 50)
-• 文字色の設定：青 → :fonto.rendaer("", True,(0, 0, 255))
-• スコアの初期値の設定：0
+• 文字色の設定：青 → :self.fonto.rendaer("", True,(0, 0, 255))
+• スコアの初期値の設定：0 :self.score = 0
 • 文字列Surfaceの生成：self.img = self.fonto.render("表示させる文字列"
 , 0, 色)
-• 文字列の中心座標：画面左下(横座標：100，縦座標：画面下部から50)
-• updateメソッド: def update(                               )
-• 現在のスコアを表示させる文字列Surfaceの生成
+• 文字列の中心座標：画面左下(横座標：100，縦座標：画面下部から50):
+ text_rect = text.get_rect(bottomright = (100, 50))
+ screen.blit(text,(100,50))
+• updateメソッド: def update(self, screen: pg.Surface )
+• 現在のスコアを表示させる文字列Surfaceの生成: self.img = self.font.rendaer() 
 
-• スクリーンにblit
+• スクリーンにblit screen.blit(self.img, self.rct)
+
 • main関数
 • (初期化)Scoreインスタンスの生成
+score = Score()
 • (ループ)爆弾を打ち落としたらスコアアップ（1点）
+while True:
+score.scre += 1
+score.update()
 • (ループ)updateメソッドを呼び出してスコアを描画
+while Ture:
+score.uptade(screen)
 
+pg.display.update()
+
+
+2.複数ビーム：multibeamブランチ
+• main関数(初期化)
+• Beamクラスのインスタンスを複数扱うための空のリストを作る
+• main関数(ループ)
+• スペースキー押下でBeamインスタンス生成，リストにappend
+• リストの要素1つずつに対して爆弾と衝突判定し，衝突した要素はNoneとする
+• ビームリストに対して，要素がNoneでないものだけのリストに更新
+• 画面の範囲外に出たらリストから削除する  しないとリストが大きくなる
 '''
 
 class Bomb:
@@ -174,9 +196,9 @@ def main():
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 return
-            # if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-            #     # スペースキー押下でBeamクラスのインスタンス生成
-            #     beam = Beam(bird)            
+            if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+                # スペースキー押下でBeamクラスのインスタンス生成
+                beam = Beam(bird)            
         screen.blit(bg_img, [0, 0])
         
         if bird.rct.colliderect(bomb.rct):
@@ -188,7 +210,7 @@ def main():
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        # beam.update(screen)   
+        beam.update(screen)   
         bomb.update(screen)
         pg.display.update()
         tmr += 1
