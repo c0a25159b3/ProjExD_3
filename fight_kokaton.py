@@ -93,8 +93,8 @@ class Beam:
         ビーム画像Surfaceを生成する
         引数 bird：ビームを放つこうかとん（Birdインスタンス）
         """
-        self.img = pg.img.load(f"fig/beam.png")
-        self.rct = self.img.rect()
+        self.img = pg.image.load(f"fig/beam.png")
+        self.rct = self.img.get_rect()
         self.rct.centery  = bird.rct.centery #ビームの中心縦座標 = こうかとんの中心縦座標
         self.rct.left =  bird.rct.right     #ビームの左座標 = こうかとんの右座標
         self.vx, self.vy = +5, 0
@@ -107,50 +107,6 @@ class Beam:
         if check_bound(self.rct) == (True, True):
             self.rct.move_ip(self.vx, self.vy)
             screen.blit(self.img, self.rct)    
-
-'''1.スコア表示：scoreブランチ
-class Score
-
-• Scoreクラス
-• イニシャライザ
-def __init__(self , socre: "Score");
-
-• フォントの設定：self.fonto = pg.font.Font(None, 50)
-• 文字色の設定：青 → :self.fonto.rendaer("", True,(0, 0, 255))
-• スコアの初期値の設定：0 :self.score = 0
-• 文字列Surfaceの生成：self.img = self.fonto.render("表示させる文字列"
-, 0, 色)
-• 文字列の中心座標：画面左下(横座標：100，縦座標：画面下部から50):
- text_rect = text.get_rect(bottomright = (100, 50))
- screen.blit(text,(100,50))
-• updateメソッド: def update(self, screen: pg.Surface )
-• 現在のスコアを表示させる文字列Surfaceの生成: self.img = self.font.rendaer() 
-
-• スクリーンにblit screen.blit(self.img, self.rct)
-
-• main関数
-• (初期化)Scoreインスタンスの生成
-score = Score()
-• (ループ)爆弾を打ち落としたらスコアアップ（1点）
-while True:
-score.scre += 1
-score.update()
-• (ループ)updateメソッドを呼び出してスコアを描画
-while Ture:
-score.uptade(screen)
-
-pg.display.update()
-
-
-2.複数ビーム：multibeamブランチ
-• main関数(初期化)
-• Beamクラスのインスタンスを複数扱うための空のリストを作る
-• main関数(ループ)
-• スペースキー押下でBeamインスタンス生成，リストにappend
-• リストの要素1つずつに対して爆弾と衝突判定し，衝突した要素はNoneとする
-• ビームリストに対して，要素がNoneでないものだけのリストに更新
-• 画面の範囲外に出たらリストから削除する  しないとリストが大きくなる
-'''
 
 class Bomb:
     """
@@ -200,18 +156,27 @@ def main():
                 # スペースキー押下でBeamクラスのインスタンス生成
                 beam = Beam(bird)            
         screen.blit(bg_img, [0, 0])
-        
-        if bird.rct.colliderect(bomb.rct):
-            # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
-            bird.change_img(8, screen)
-            pg.display.update()
-            time.sleep(1)
-            return
+
+        if bomb is not None:
+            if bird.rct.colliderect(bomb.rct):
+                # ゲームオーバー時に，こうかとん画像を切り替え，1秒間表示させる
+                bird.change_img(8, screen)
+                pg.display.update()
+                time.sleep(1)
+                return
+
+        if bomb is not None:
+            if beam is not None:
+                if beam.rct.colliderect(bomb.rct): #ビームと爆弾の衝突判定
+                    beam = None
+                    bomb = None
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
-        beam.update(screen)   
-        bomb.update(screen)
+        if beam is not None:
+            beam.update(screen) 
+        if bomb is not None:  
+            bomb.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
