@@ -216,7 +216,6 @@ def main():
         for bomb in bombs:  
             bomb.update(screen)
             
-            
         score.update(screen)
         pg.display.update()
         
