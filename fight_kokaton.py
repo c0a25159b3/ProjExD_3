@@ -10,7 +10,6 @@ HEIGHT = 650  # ゲームウィンドウの高さ
 NUM_OF_BOMBS = 5  # 爆弾の個数
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
-
 def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     """
     オブジェクトが画面内or画面外を判定し，真理値タプルを返す関数
@@ -170,6 +169,7 @@ def main():
     #     bombs.append(Bomb((255, 0, 0), 10))
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
     beam = None  # ゲーム初期化時にはビームは存在しない
+    beams = []
     clock = pg.time.Clock()
     tmr = 0
     while True:
@@ -178,7 +178,10 @@ def main():
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 # スペースキー押下でBeamクラスのインスタンス生成
-                beam = Beam(bird)            
+                beam = Beam(bird)
+                beams.append(beam) 
+                #beams.remove([])
+
         screen.blit(bg_img, [0, 0])
 
         for bomb in bombs:
@@ -202,6 +205,9 @@ def main():
                         pg.display.update()
             
         bombs = [bomb for bomb in bombs if bomb is not None]  # Noneを取り除く
+        beams = [beam for beam in beams if beam is not None]  # Noneを取り除く
+
+        
 
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
