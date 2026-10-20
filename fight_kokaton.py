@@ -109,6 +109,7 @@ class Beam:
             self.rct.move_ip(self.vx, self.vy)
             screen.blit(self.img, self.rct)    
 
+
 class Bomb:
     """
     爆弾に関するクラス
@@ -154,8 +155,6 @@ class Score:
     def update (self, screen: pg.Surface):
         self.img = self.fonto.render(f"Score:{self.value}" ,0 ,(0, 0, 255)) 
         screen.blit(self.img, self.rct)
-
-
 
 
 def main():
@@ -209,8 +208,7 @@ def main():
             beam.update(screen) 
         for bomb in bombs:  
             bomb.update(screen)
-            
-            
+        
         score.update(screen)
         pg.display.update()
         
